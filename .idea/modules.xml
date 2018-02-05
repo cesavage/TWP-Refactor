@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TWP-Perkins-Savage.iml" filepath="$PROJECT_DIR$/TWP-Perkins-Savage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WikipediaRevisions/WikipediaRevisions.iml" filepath="$PROJECT_DIR$/WikipediaRevisions/WikipediaRevisions.iml" />
     </modules>
   </component>
 </project>
