@@ -7,10 +7,10 @@ import org.junit.Test;
 public class TestWikipediaRevisions {
 
     @Test
-    public void getFirstAuthorTest() {
+    public void testGetFirstEditorUsername() {
 
-        WikiPageJsonParser Samf4u = new WikiPageJsonParser();
-        Assert.assertEquals("\"Samf4u\"", Samf4u.getFirstEditor());
+        WikiPageJsonParser testParser = new WikiPageJsonParser();
+        Assert.assertEquals("Samf4u", testParser.getFirstRevisionEditorUsername());
 
 
     }
