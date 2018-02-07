@@ -17,16 +17,14 @@ public class WikiPageJsonParser {
         InputStream jsonInputStream = getClass().getClassLoader().getResourceAsStream("sample.json");
         Reader jsonStreamReader = new InputStreamReader(jsonInputStream);
         JsonElement jsonRootElement = gsonJsonParser.parse(jsonStreamReader);
-        JsonObject rootObject = jsonRootElement.getAsJsonObject();
 
-        return rootObject;
+        return jsonRootElement.getAsJsonObject();
     }
 
     private JsonObject getPage(){
         JsonObject rootObject = this.getJsonRoot();
-        JsonObject page = rootObject.getAsJsonObject("query").getAsJsonObject("pages");
 
-        return page;
+        return rootObject.getAsJsonObject("query").getAsJsonObject("pages");
     }
 
     private JsonArray getRevisions(){
@@ -45,9 +43,8 @@ public class WikiPageJsonParser {
         JsonArray revisions = this.getRevisions();
         int firstRevisionIndex = revisions.size()-1;
         JsonObject firstRevision = revisions.get(firstRevisionIndex).getAsJsonObject();
-        String  username = firstRevision.getAsJsonPrimitive("user").toString();
 
-        return username;
+        return firstRevision.getAsJsonPrimitive("user").toString();
     }
 
 
