@@ -10,8 +10,7 @@ import java.io.Reader;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 public class WikiPageJsonParser {
 
@@ -40,7 +39,7 @@ public class WikiPageJsonParser {
         return rootObject.getAsJsonObject("query").getAsJsonObject("pages");
     }
 
-    private JsonArray getRevisions(){
+    public JsonArray getRevisionsJsonArray(){
         JsonObject page = this.getPage();
 
         JsonArray revisions = null;
@@ -52,43 +51,38 @@ public class WikiPageJsonParser {
         return revisions;
     }
 
-    public String getFirstRevisionEditorUsername() {
-        JsonArray revisions = this.getRevisions();
-        int firstRevisionIndex = revisions.size()-1;
-        JsonObject firstRevision = revisions.get(firstRevisionIndex).getAsJsonObject();
+    public List getRevisionsList() throws ParseException {
+        List<WikiPageRevision> newList = new ArrayList<WikiPageRevision>();
+        JsonArray Revisions = this.getRevisionsJsonArray();
+        for(JsonElement revision : Revisions){
+            JsonObject revisionObject = revision.getAsJsonObject();
+            String user = revisionObject.get("user").getAsString();
+            String date = revisionObject.get("timestamp").getAsString();
+            Timestamp timestamp = getTimestampInLocalTime(date);
+            //TODO add anonymous option
+            WikiPageRevision wikiPageRevisionObject = new WikiPageRevision(user, timestamp);
+            newList.add(wikiPageRevisionObject);
+        }
 
-        String username = firstRevision.getAsJsonPrimitive("user").toString();
-
-        //MediaWiki API returns username in quotations.
-        //Remove quotations by stripping first and last characters from the string.
-        username = username.substring(1, username.length()-1);
-
-        return username;
-
+        return newList;
     }
 
-    public String getFirstRevisionTimestamp(){
-        JsonArray revisions = this.getRevisions();
-        int firstRevisionIndex = revisions.size()-1;
-        JsonObject firstRevision = revisions.get(firstRevisionIndex).getAsJsonObject();
 
-        String timestamp = firstRevision.getAsJsonPrimitive("timestamp").toString();
 
-        //MediaWiki API returns username in quotations.
-        //Remove quotations by stripping first and last characters from the string.
-        timestamp = timestamp.substring(1, timestamp.length()-1);
 
-        return timestamp;
-    }
 
-    public Timestamp getTimestampInLocalTime() throws ParseException {
+
+    public Timestamp getTimestampInLocalTime(String timestamp) throws ParseException {
         SimpleDateFormat wikiTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
         wikiTimeFormat.setTimeZone(TimeZone.getTimeZone("Z"));
-        java.util.Date parsedDate = wikiTimeFormat.parse(this.getFirstRevisionTimestamp());
+        java.util.Date parsedDate = wikiTimeFormat.parse(timestamp);
         Timestamp localTimestamp = new Timestamp(parsedDate.getTime());
 
         return localTimestamp;
     }
+
+
+
 
 }
 
