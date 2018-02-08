@@ -6,8 +6,8 @@ import java.sql.Timestamp;
 
 public class WikiPageRevision {
 
-    private String username;
-    private Timestamp localTimeStamp;
+    public String username;
+    public Timestamp localTimeStamp;
 
     WikiPageRevision(String username, Timestamp localTimeStamp){
 

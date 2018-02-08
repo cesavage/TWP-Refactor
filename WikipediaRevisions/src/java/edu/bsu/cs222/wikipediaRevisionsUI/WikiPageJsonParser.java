@@ -28,10 +28,9 @@ public class WikiPageJsonParser {
         Reader jsonStreamReader = this.getJsonStreamReader();
         com.google.gson.JsonParser gsonJsonParser = new com.google.gson.JsonParser();
         JsonElement jsonRootElement = gsonJsonParser.parse(jsonStreamReader);
-
+        System.out.println(jsonRootElement.getAsJsonObject());
         return jsonRootElement.getAsJsonObject();
     }
-
 
     private JsonObject getPage(){
         JsonObject rootObject = this.getJsonRoot();
@@ -51,9 +50,10 @@ public class WikiPageJsonParser {
         return revisions;
     }
 
-    public List getRevisionsList() throws ParseException {
+    public List generateRevisionListFromArray() throws ParseException {
         List<WikiPageRevision> newList = new ArrayList<WikiPageRevision>();
         JsonArray Revisions = this.getRevisionsJsonArray();
+
         for(JsonElement revision : Revisions){
             JsonObject revisionObject = revision.getAsJsonObject();
             String user = revisionObject.get("user").getAsString();
@@ -66,11 +66,6 @@ public class WikiPageJsonParser {
 
         return newList;
     }
-
-
-
-
-
 
     public Timestamp getTimestampInLocalTime(String timestamp) throws ParseException {
         SimpleDateFormat wikiTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
