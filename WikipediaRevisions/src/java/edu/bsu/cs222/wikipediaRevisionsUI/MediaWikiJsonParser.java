@@ -6,49 +6,40 @@ import com.google.gson.*;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class WikiPageJsonParser {
+public class MediaWikiJsonParser {
 
-    private InputStream getJsonInputStream(){
-        return getClass().getClassLoader().getResourceAsStream("sample.json");
-    }
+    private MediaWikiConnection mediaWikiConnection = new MediaWikiConnection("sample.json");
+    private InputStream inputStream = mediaWikiConnection.createInputStream();
+    private InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 
-    private Reader getJsonStreamReader(){
-        InputStream jsonInputStream = this.getJsonInputStream();
-        return new InputStreamReader(jsonInputStream);
+    private com.google.gson.JsonParser jsonParser = new com.google.gson.JsonParser();
+    private JsonObject wikiRootObject = jsonParser.parse(inputStreamReader).getAsJsonObject();
+    private JsonObject wikiQueryObject = wikiRootObject.getAsJsonObject("query");
+    private JsonObject wikiPagesObject = wikiQueryObject.getAsJsonObject("pages");
+    private JsonObject wikiRevisionsObject = wikiPagesObject.getAsJsonObject("revisions");
 
-    }
 
-    private JsonObject getJsonRoot(){
-        Reader jsonStreamReader = this.getJsonStreamReader();
-        com.google.gson.JsonParser gsonJsonParser = new com.google.gson.JsonParser();
-        JsonElement jsonRootElement = gsonJsonParser.parse(jsonStreamReader);
-        System.out.println(jsonRootElement.getAsJsonObject());
-        return jsonRootElement.getAsJsonObject();
-    }
-
-    private JsonObject getPage(){
-        JsonObject rootObject = this.getJsonRoot();
-
-        return rootObject.getAsJsonObject("query").getAsJsonObject("pages");
-    }
 
     public JsonArray getRevisionsJsonArray(){
-        JsonObject page = this.getPage();
-
         JsonArray revisions = null;
-        for (Map.Entry<String, JsonElement> entry : page.entrySet()){
+
+        //private JsonObject wikiRevisionsObject = wikiPagesObject.getAsJsonObject("revisions");
+        //System.out.println(wikiRevisionsObject.getAsJsonArray());
+
+        for (Map.Entry<String, JsonElement> entry : wikiPagesObject.entrySet()){
             JsonObject entryObject = entry.getValue().getAsJsonObject();
             revisions = entryObject.getAsJsonArray("revisions");
         }
-
         return revisions;
     }
+
+
+
 
     public List generateRevisionListFromArray() throws ParseException {
         List<WikiPageRevision> newList = new ArrayList<WikiPageRevision>();
@@ -59,7 +50,7 @@ public class WikiPageJsonParser {
             String user = revisionObject.get("user").getAsString();
             String date = revisionObject.get("timestamp").getAsString();
             Timestamp timestamp = getTimestampInLocalTime(date);
-            //TODO add anonymous option
+
             WikiPageRevision wikiPageRevisionObject = new WikiPageRevision(user, timestamp);
             newList.add(wikiPageRevisionObject);
         }
@@ -75,7 +66,6 @@ public class WikiPageJsonParser {
 
         return localTimestamp;
     }
-
 
 
 
