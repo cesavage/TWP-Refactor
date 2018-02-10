@@ -14,9 +14,12 @@ import java.util.*;
 public class RevisionCollection {
 
     InputStreamReader inputStreamReader;
+    List<Revision> revisionsList;
+
 
     public RevisionCollection(InputStreamReader inputStream) throws IOException, ParseException {
         this.inputStreamReader = inputStream;
+        revisionsList = this.createRevisionList();
 
     }
 
@@ -30,16 +33,21 @@ public class RevisionCollection {
     }
 
     public List<Revision> getRevisionsByNewestFirst() {
+        return this.revisionsList;
 
-
-        return null;
     }
 
-    public List<Revision> getRevisions() throws IOException, ParseException {
+    public List<Revision> getRevisionsByOldestFirst(){
+
+
+        return this.revisionsList;
+    }
+
+    private List<Revision> createRevisionList() throws IOException, ParseException {
 
         JsonObject wikiPagesObject = new MediaWikiJsonParser(this.inputStreamReader).wikiPagesObject;
         JsonArray jrevisions = null;
-        List<Revision> revisionsList = new ArrayList<Revision>();
+        List<Revision> localRevisionsList = new ArrayList<Revision>();
 
         for (Map.Entry<String, JsonElement> entry : wikiPagesObject.entrySet()){
             JsonObject entryObject = entry.getValue().getAsJsonObject();
@@ -54,10 +62,10 @@ public class RevisionCollection {
             Timestamp timestamp = getTimestampInLocalTime(date);
 
             Revision wikiPageRevisionObject = new Revision(user, timestamp);
-            revisionsList.add(wikiPageRevisionObject);
+            localRevisionsList.add(wikiPageRevisionObject);
         }
 
-        return revisionsList;
+        return localRevisionsList;
     }
 }
 

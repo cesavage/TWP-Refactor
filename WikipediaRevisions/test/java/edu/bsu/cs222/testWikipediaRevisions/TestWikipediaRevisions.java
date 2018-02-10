@@ -67,7 +67,7 @@ public class TestWikipediaRevisions {
         InputStreamReader inputStreamReader = new MediaWikiConnection("sample.json").createInputStreamReader();
         RevisionCollection revisionCollection = new RevisionCollection(inputStreamReader);
 
-        Assert.assertEquals(4, revisionCollection.getRevisions().size());
+        Assert.assertEquals(4, revisionCollection.getRevisionsByNewestFirst().size());
     }
 
 
@@ -76,7 +76,7 @@ public class TestWikipediaRevisions {
         InputStreamReader inputStreamReader = new MediaWikiConnection("sample.json").createInputStreamReader();
         RevisionCollection revisionCollection = new RevisionCollection(inputStreamReader);
 
-        Revision newestRevision = revisionCollection.getRevisions().get(0);
+        Revision newestRevision = revisionCollection.getRevisionsByNewestFirst().get(0);
 
         //TODO One assert per test.
         Assert.assertEquals("ClueBot NG", newestRevision.username);
@@ -88,7 +88,7 @@ public class TestWikipediaRevisions {
         InputStreamReader inputStreamReader = new MediaWikiConnection("sample.json").createInputStreamReader();
         RevisionCollection revisionCollection = new RevisionCollection(inputStreamReader);
 
-        Revision oldestRevision = revisionCollection.getRevisions().get(3);
+        Revision oldestRevision = revisionCollection.getRevisionsByNewestFirst().get(3);
 
         //TODO One assert per test.
         Assert.assertEquals("Samf4u", oldestRevision.username);
@@ -96,11 +96,15 @@ public class TestWikipediaRevisions {
     }
 
     @Test
-    public void testGetRevisionsByNewestFirst() throws IOException, ParseException {
+    public void testGetRevisionsByOldestFirst() throws IOException, ParseException {
         InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
         RevisionCollection revisionCollection = new RevisionCollection(wikiData);
 
-        List<Revision> revisionList = revisionCollection.getRevisionsByNewestFirst();
+        Revision newestRevision = revisionCollection.getRevisionsByNewestFirst().get(0);
+
+        //TODO One assert per test.
+        Assert.assertEquals("Samf4u", newestRevision.username);
+        Assert.assertEquals("2018-01-30 17:14:55.0", newestRevision.localTimeStamp.toString());
 
     }
 

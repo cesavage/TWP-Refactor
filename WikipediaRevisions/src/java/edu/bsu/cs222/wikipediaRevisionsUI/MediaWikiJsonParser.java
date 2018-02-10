@@ -13,7 +13,7 @@ public class MediaWikiJsonParser {
     public JsonObject wikiRevisionsObject;
 
 
-    MediaWikiJsonParser(InputStreamReader passedStreamReader) throws IOException {
+    MediaWikiJsonParser(InputStreamReader passedStreamReader) {
         this.inputStreamReader = passedStreamReader;
         wikiRootObject = gsonJsonParser.parse(inputStreamReader).getAsJsonObject();
         wikiQueryObject = wikiRootObject.getAsJsonObject("query");
