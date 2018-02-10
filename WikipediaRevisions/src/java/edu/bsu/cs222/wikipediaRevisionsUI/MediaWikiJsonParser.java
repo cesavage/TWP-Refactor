@@ -14,16 +14,22 @@ import java.util.*;
 
 public class MediaWikiJsonParser {
 
-    private MediaWikiConnection mediaWikiConnection = new MediaWikiConnection("sample.json");
-    private InputStreamReader inputStreamReader = mediaWikiConnection.createInputStreamReader();
 
+
+    private InputStreamReader inputStreamReader;
     private com.google.gson.JsonParser jsonParser = new com.google.gson.JsonParser();
-    private JsonObject wikiRootObject = jsonParser.parse(inputStreamReader).getAsJsonObject();
-    private JsonObject wikiQueryObject = wikiRootObject.getAsJsonObject("query");
-    private JsonObject wikiPagesObject = wikiQueryObject.getAsJsonObject("pages");
-    private JsonObject wikiRevisionsObject = wikiPagesObject.getAsJsonObject("revisions");
 
-    public MediaWikiJsonParser() throws IOException {
+    public JsonObject wikiRootObject;
+    public JsonObject wikiQueryObject;
+    public JsonObject wikiPagesObject;
+    public JsonObject wikiRevisionsObject;
+
+    public MediaWikiJsonParser(InputStreamReader passedStreamReader) throws IOException {
+        this.inputStreamReader = passedStreamReader;
+        wikiRootObject = jsonParser.parse(inputStreamReader).getAsJsonObject();
+        wikiQueryObject = wikiRootObject.getAsJsonObject("query");
+        wikiPagesObject = wikiQueryObject.getAsJsonObject("pages");
+        wikiRevisionsObject = wikiPagesObject.getAsJsonObject("revisions");
     }
 
 

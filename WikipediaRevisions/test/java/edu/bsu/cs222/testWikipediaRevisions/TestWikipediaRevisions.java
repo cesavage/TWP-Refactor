@@ -74,13 +74,19 @@ public class TestWikipediaRevisions {
 
     @Test
     public void testCreateRevisionObjectList() throws ParseException, IOException {
-        MediaWikiJsonParser parser = new MediaWikiJsonParser();
+        MediaWikiConnection mediaWikiConnection = new MediaWikiConnection("sample.json");
+        InputStreamReader inputStreamReader = mediaWikiConnection.createInputStreamReader();
+
+        MediaWikiJsonParser parser = new MediaWikiJsonParser(inputStreamReader);
         Assert.assertEquals(4, parser.generateRevisionListFromArray().size());
     }
 
     @Test
     public void testLastRevisionObjectAttributes() throws ParseException, IOException {
-        MediaWikiJsonParser parser = new MediaWikiJsonParser();
+        MediaWikiConnection mediaWikiConnection = new MediaWikiConnection("sample.json");
+        InputStreamReader inputStreamReader = mediaWikiConnection.createInputStreamReader();
+
+        MediaWikiJsonParser parser = new MediaWikiJsonParser(inputStreamReader);
         List revisionList = parser.generateRevisionListFromArray();
         WikiPageRevision firstRevision = (WikiPageRevision) revisionList.get(revisionList.size()-1);
         Assert.assertEquals("Samf4u", firstRevision.username);
@@ -89,7 +95,10 @@ public class TestWikipediaRevisions {
 
     @Test
     public void testFirstRevisionObjectAttributes() throws ParseException, IOException {
-        MediaWikiJsonParser parser = new MediaWikiJsonParser();
+        MediaWikiConnection mediaWikiConnection = new MediaWikiConnection("sample.json");
+        InputStreamReader inputStreamReader = mediaWikiConnection.createInputStreamReader();
+
+        MediaWikiJsonParser parser = new MediaWikiJsonParser(inputStreamReader);
         List revisionList = parser.generateRevisionListFromArray();
         WikiPageRevision firstRevision = (WikiPageRevision) revisionList.get(0);
         Assert.assertEquals("ClueBot NG", firstRevision.username);
