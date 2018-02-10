@@ -4,6 +4,7 @@ package edu.bsu.cs222.wikipediaRevisionsUI;
 import com.google.gson.*;
 
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Timestamp;
@@ -14,8 +15,7 @@ import java.util.*;
 public class MediaWikiJsonParser {
 
     private MediaWikiConnection mediaWikiConnection = new MediaWikiConnection("sample.json");
-    private InputStream inputStream = mediaWikiConnection.createInputStream();
-    private InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+    private InputStreamReader inputStreamReader = mediaWikiConnection.createInputStreamReader();
 
     private com.google.gson.JsonParser jsonParser = new com.google.gson.JsonParser();
     private JsonObject wikiRootObject = jsonParser.parse(inputStreamReader).getAsJsonObject();
@@ -23,6 +23,8 @@ public class MediaWikiJsonParser {
     private JsonObject wikiPagesObject = wikiQueryObject.getAsJsonObject("pages");
     private JsonObject wikiRevisionsObject = wikiPagesObject.getAsJsonObject("revisions");
 
+    public MediaWikiJsonParser() throws IOException {
+    }
 
 
     public JsonArray getRevisionsJsonArray(){

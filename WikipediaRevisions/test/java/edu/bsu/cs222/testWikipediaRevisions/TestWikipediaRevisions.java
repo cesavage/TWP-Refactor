@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.List;
 
@@ -62,23 +63,23 @@ public class TestWikipediaRevisions {
     }
 
     @Test
-    public void testCreateJsonInputStream() throws IOException {
+    public void testCreateJsonInputStreamReader() throws IOException {
         MediaWikiConnection mediaWikiConnection = new MediaWikiConnection("sample.json");
-        InputStream inputStream = mediaWikiConnection.createInputStream();
+        InputStreamReader inputStreamReader = mediaWikiConnection.createInputStreamReader();
 
         //inputStream.read() == -1 means end of file / empty file.
-        Assert.assertFalse(inputStream.read() == -1);
+        Assert.assertFalse(inputStreamReader.read() == -1);
         }
 
 
     @Test
-    public void testCreateRevisionObjectList() throws ParseException {
+    public void testCreateRevisionObjectList() throws ParseException, IOException {
         MediaWikiJsonParser parser = new MediaWikiJsonParser();
         Assert.assertEquals(4, parser.generateRevisionListFromArray().size());
     }
 
     @Test
-    public void testLastRevisionObjectAttributes() throws ParseException {
+    public void testLastRevisionObjectAttributes() throws ParseException, IOException {
         MediaWikiJsonParser parser = new MediaWikiJsonParser();
         List revisionList = parser.generateRevisionListFromArray();
         WikiPageRevision firstRevision = (WikiPageRevision) revisionList.get(revisionList.size()-1);
@@ -87,7 +88,7 @@ public class TestWikipediaRevisions {
     }
 
     @Test
-    public void testFirstRevisionObjectAttributes() throws ParseException {
+    public void testFirstRevisionObjectAttributes() throws ParseException, IOException {
         MediaWikiJsonParser parser = new MediaWikiJsonParser();
         List revisionList = parser.generateRevisionListFromArray();
         WikiPageRevision firstRevision = (WikiPageRevision) revisionList.get(0);
