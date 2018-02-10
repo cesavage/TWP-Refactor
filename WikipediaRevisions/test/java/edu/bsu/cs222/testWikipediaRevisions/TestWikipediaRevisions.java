@@ -95,6 +95,7 @@ public class TestWikipediaRevisions {
         Assert.assertEquals("2018-01-30 17:14:55.0", oldestRevision.localTimeStamp.toString());
     }
 
+    /*
     @Test
     public void testGetRevisionsByOldestFirst() throws IOException, ParseException {
         InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
@@ -105,6 +106,26 @@ public class TestWikipediaRevisions {
         //TODO One assert per test.
         Assert.assertEquals("Samf4u", newestRevision.username);
         Assert.assertEquals("2018-01-30 17:14:55.0", newestRevision.localTimeStamp.toString());
+
+    }
+    */
+
+    @Test
+    public void testSortMultipleContributionAuthor() throws ParseException, IOException {
+        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
+        RevisionCollection revisionCollection = new RevisionCollection(wikiData);
+
+
+        List<Revision> sortedRevisions = revisionCollection.getSortedRevisions();
+
+        for(Revision currentRevision : sortedRevisions){
+            System.out.println(currentRevision.username);
+            System.out.println(currentRevision.localTimeStamp);
+            System.out.println("\n");
+        }
+
+
+
 
     }
 

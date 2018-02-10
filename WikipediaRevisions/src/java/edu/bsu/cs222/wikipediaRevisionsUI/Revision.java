@@ -12,6 +12,12 @@ public class Revision implements Comparable<Revision>{
         this.localTimeStamp = localTimeStamp;
     }
 
+    public String getRevisionUserName(){
+        this.username = username;
+
+        return this.username;
+    }
+
     //TODO
     public int compareTo(Revision compareDate) {
         return 0;
