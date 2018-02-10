@@ -52,14 +52,7 @@ public class TestWikipediaRevisions {
     }
 
 */
-    @Test
-    public void testCreateRevisionsCollection() throws IOException, ParseException {
-        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
-        RevisionCollection revisionCollection = new RevisionCollection(wikiData);
 
-        List<Revision> revisionList = revisionCollection.getRevisionsByNewestFirst();
-
-    }
 
     @Test
     public void testCreateJsonInputStreamReader() throws IOException {
@@ -74,33 +67,41 @@ public class TestWikipediaRevisions {
         InputStreamReader inputStreamReader = new MediaWikiConnection("sample.json").createInputStreamReader();
         RevisionCollection revisionCollection = new RevisionCollection(inputStreamReader);
 
-        Assert.assertEquals(4, revisionCollection.revisionsList.size());
+        Assert.assertEquals(4, revisionCollection.getRevisions().size());
     }
 
+
     @Test
-    public void testLastRevisionObjectAttributes() throws ParseException, IOException {
+    public void testNewestRevisionObjectAttributes() throws ParseException, IOException {
         InputStreamReader inputStreamReader = new MediaWikiConnection("sample.json").createInputStreamReader();
         RevisionCollection revisionCollection = new RevisionCollection(inputStreamReader);
 
-        Revision firstRevision = revisionCollection.revisionsList.get(revisionCollection.revisionsList.size()-1);
+        Revision newestRevision = revisionCollection.getRevisions().get(0);
 
         //TODO One assert per test.
-        Assert.assertEquals("Samf4u", firstRevision.username);
-        Assert.assertEquals("2018-01-30 17:14:55.0", firstRevision.localTimeStamp.toString());
+        Assert.assertEquals("ClueBot NG", newestRevision.username);
+        Assert.assertEquals("2018-02-02 06:08:40.0", newestRevision.localTimeStamp.toString());
     }
 
     @Test
-    public void testFirstRevisionObjectAttributes() throws ParseException, IOException {
+    public void testOldestRevisionObjectAttributes() throws ParseException, IOException {
         InputStreamReader inputStreamReader = new MediaWikiConnection("sample.json").createInputStreamReader();
         RevisionCollection revisionCollection = new RevisionCollection(inputStreamReader);
 
-        Revision lastRevision = revisionCollection.revisionsList.get(0);
+        Revision oldestRevision = revisionCollection.getRevisions().get(3);
 
         //TODO One assert per test.
-        Assert.assertEquals("ClueBot NG", lastRevision.username);
-        Assert.assertEquals("2018-02-02 06:08:40.0", lastRevision.localTimeStamp.toString());
+        Assert.assertEquals("Samf4u", oldestRevision.username);
+        Assert.assertEquals("2018-01-30 17:14:55.0", oldestRevision.localTimeStamp.toString());
     }
 
+    @Test
+    public void testGetRevisionsByNewestFirst() throws IOException, ParseException {
+        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
+        RevisionCollection revisionCollection = new RevisionCollection(wikiData);
 
+        List<Revision> revisionList = revisionCollection.getRevisionsByNewestFirst();
+
+    }
 
 }

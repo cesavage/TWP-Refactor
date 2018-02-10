@@ -9,18 +9,37 @@ import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 public class RevisionCollection {
 
-    public List<Revision> revisionsList = new ArrayList<Revision>();
+    InputStreamReader inputStreamReader;
 
     public RevisionCollection(InputStreamReader inputStream) throws IOException, ParseException {
-        JsonObject wikiPagesObject = new MediaWikiJsonParser(inputStream).wikiPagesObject;
+        this.inputStreamReader = inputStream;
+
+    }
+
+    public Timestamp getTimestampInLocalTime(String timestamp) throws ParseException {
+        SimpleDateFormat wikiTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+        wikiTimeFormat.setTimeZone(TimeZone.getTimeZone("Z"));
+        java.util.Date parsedDate = wikiTimeFormat.parse(timestamp);
+        Timestamp localTimestamp = new Timestamp(parsedDate.getTime());
+
+        return localTimestamp;
+    }
+
+    public List<Revision> getRevisionsByNewestFirst() {
+
+
+        return null;
+    }
+
+    public List<Revision> getRevisions() throws IOException, ParseException {
+
+        JsonObject wikiPagesObject = new MediaWikiJsonParser(this.inputStreamReader).wikiPagesObject;
         JsonArray jrevisions = null;
+        List<Revision> revisionsList = new ArrayList<Revision>();
 
         for (Map.Entry<String, JsonElement> entry : wikiPagesObject.entrySet()){
             JsonObject entryObject = entry.getValue().getAsJsonObject();
@@ -38,21 +57,7 @@ public class RevisionCollection {
             revisionsList.add(wikiPageRevisionObject);
         }
 
-    }
-
-    public Timestamp getTimestampInLocalTime(String timestamp) throws ParseException {
-        SimpleDateFormat wikiTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
-        wikiTimeFormat.setTimeZone(TimeZone.getTimeZone("Z"));
-        java.util.Date parsedDate = wikiTimeFormat.parse(timestamp);
-        Timestamp localTimestamp = new Timestamp(parsedDate.getTime());
-
-        return localTimestamp;
-    }
-
-    public List<Revision> getRevisionsByNewestFirst() {
-
-
-        return null;
+        return revisionsList;
     }
 }
 
