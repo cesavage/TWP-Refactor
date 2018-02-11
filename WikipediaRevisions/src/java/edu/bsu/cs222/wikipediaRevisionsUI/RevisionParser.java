@@ -5,12 +5,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class RevisionParser {
-    com.google.gson.JsonParser gsonJsonParser = new com.google.gson.JsonParser();
+    private com.google.gson.JsonParser gsonJsonParser = new com.google.gson.JsonParser();
 
-    public Revision parse(InputStreamReader sampleJsonStreamReader){
+    public List<Revision> parse(InputStreamReader sampleJsonStreamReader){
 
         JsonArray jsonRevisionsArray = new JsonArray();
 
@@ -23,17 +25,18 @@ public class RevisionParser {
             jsonRevisionsArray = jsonRevisionObject.getAsJsonArray("revisions");
         }
 
-        JsonObject firstRevisionElement = jsonRevisionsArray.get(0).getAsJsonObject();
+        List<Revision> revisionList = new ArrayList<>();
 
-        String firstAuthor = new String();
-        firstAuthor = firstRevisionElement.get("user").getAsString();
+        for (JsonElement jsonSingleRevision : jsonRevisionsArray){
+            JsonObject jsonCurrentRevision = jsonSingleRevision.getAsJsonObject();
+            String user = jsonCurrentRevision.get("user").getAsString();
+            String timestamp = jsonCurrentRevision.get("timestamp").getAsString();
 
-        String timeStamp = new String();
-        timeStamp = firstRevisionElement.get("timestamp").getAsString();
+            Revision currentRevision = new Revision(user, timestamp);
+            revisionList.add(currentRevision);
+        }
 
-        Revision firstRevision = new Revision(firstAuthor, timeStamp);
-
-        return firstRevision;
+        return revisionList;
 
     }
 

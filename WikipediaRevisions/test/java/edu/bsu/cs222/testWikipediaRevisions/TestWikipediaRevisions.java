@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import java.util.List;
 import java.util.Map;
 
 public class TestWikipediaRevisions {
@@ -47,9 +48,9 @@ public class TestWikipediaRevisions {
 
         RevisionParser revisionParser = new RevisionParser();
 
-        Revision firstRevision = revisionParser.parse(sampleJsonStreamReader);
+        List<Revision> revisions = revisionParser.parse(sampleJsonStreamReader);
 
-        Assert.assertEquals("ClueBot NG", firstRevision.username);
+        Assert.assertEquals(4, revisions.size());
     }
 
 
