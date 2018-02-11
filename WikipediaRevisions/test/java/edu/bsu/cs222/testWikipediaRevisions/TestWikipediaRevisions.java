@@ -3,11 +3,13 @@ package edu.bsu.cs222.testWikipediaRevisions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import edu.bsu.cs222.wikipediaRevisionsUI.MediaWikiAPIConnection;
 import edu.bsu.cs222.wikipediaRevisionsUI.Revision;
 import edu.bsu.cs222.wikipediaRevisionsUI.RevisionParser;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -53,7 +55,19 @@ public class TestWikipediaRevisions {
         Assert.assertEquals(4, revisions.size());
     }
 
+    @Test
+    public void learningTestCreateURLConnection() throws IOException {
+        MediaWikiAPIConnection testConnection = new MediaWikiAPIConnection();
+        InputStreamReader testReader = testConnection.connect();
 
+        RevisionParser revisionParser = new RevisionParser();
+
+        List<Revision> revisions = revisionParser.parse(testReader);
+
+        Assert.assertEquals(30, revisions.size());
+
+
+    }
 
 
 
