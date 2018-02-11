@@ -73,9 +73,9 @@ public class TestWikipediaRevisions {
         RevisionParser revisionParser = new RevisionParser(testReader);
 
         //Set utility method as accessible and invoke by reflection.
-        Method method = RevisionParser.class.getDeclaredMethod("getPagesObjectFromJsonString");
-        method.setAccessible(true);
-        JsonObject jsonPagesObject = (JsonObject) method.invoke(revisionParser);
+        Method getPagesMethod = RevisionParser.class.getDeclaredMethod("getPagesObjectFromJsonString");
+        getPagesMethod.setAccessible(true);
+        JsonObject jsonPagesObject = (JsonObject) getPagesMethod.invoke(revisionParser);
 
         JsonObject jsonRevisionObject = new JsonObject();
         for (Map.Entry<String, JsonElement> entry : jsonPagesObject.entrySet()){
@@ -86,11 +86,23 @@ public class TestWikipediaRevisions {
     }
 
     @Test
-    public void testRevisionParserUtilityMethodGetJsonArrayFromPagesObject(){
+    public void testRevisionParserUtilityMethodGetJsonArrayFromPagesObject() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        JsonArray revisions = new JsonArray();
+        InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
+        InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
+        RevisionParser revisionParser = new RevisionParser(sampleJsonStreamReader);
 
-        Assert.assertEquals(4, revisions.size());
+        //Set utility methods as accessible.
+        Method getPagesMethod = RevisionParser.class.getDeclaredMethod("getPagesObjectFromJsonString");
+        getPagesMethod.setAccessible(true);
+        Method getArrayMethod = RevisionParser.class.getDeclaredMethod("getRevisionsArrayFromPagesObject", JsonObject.class);
+        getArrayMethod.setAccessible(true);
+
+        //Invoke utility methods by reflection.
+        JsonObject jsonPagesObject = (JsonObject) getPagesMethod.invoke(revisionParser);
+        JsonArray jsonRevisionsArray = (JsonArray) getArrayMethod.invoke(revisionParser, jsonPagesObject);
+
+        Assert.assertEquals(4, jsonRevisionsArray.size());
     }
 
 }

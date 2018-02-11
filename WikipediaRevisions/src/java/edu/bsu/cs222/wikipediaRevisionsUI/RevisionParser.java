@@ -3,7 +3,6 @@ package edu.bsu.cs222.wikipediaRevisionsUI;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import jdk.internal.util.xml.impl.Input;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -18,24 +17,11 @@ public class RevisionParser {
         this.jsonStreamReader = jsonStreamReader;
     }
 
-    private JsonObject getPagesObjectFromJsonString(){
-        JsonObject jsonRootObject = gsonJsonParser.parse(this.jsonStreamReader).getAsJsonObject();
-        JsonObject jsonQueryObject = jsonRootObject.getAsJsonObject("query");
-        JsonObject jsonPagesObject = jsonQueryObject.getAsJsonObject("pages");
-
-        return jsonPagesObject;
-    }
-
 
 
     public List<Revision> parse(){
         JsonObject jsonPagesObject = this.getPagesObjectFromJsonString();
-        JsonArray jsonRevisionsArray = new JsonArray();
-
-        for (Map.Entry<String, JsonElement> entry : jsonPagesObject.entrySet()){
-            JsonObject jsonRevisionObject = entry.getValue().getAsJsonObject();
-            jsonRevisionsArray = jsonRevisionObject.getAsJsonArray("revisions");
-        }
+        JsonArray jsonRevisionsArray = this.getRevisionsArrayFromPagesObject(jsonPagesObject);
 
         List<Revision> revisionList = new ArrayList<>();
 
@@ -47,9 +33,30 @@ public class RevisionParser {
             Revision currentRevision = new Revision(user, timestamp);
             revisionList.add(currentRevision);
         }
-
         return revisionList;
-
     }
+
+
+
+    private JsonObject getPagesObjectFromJsonString(){
+        JsonObject jsonRootObject = gsonJsonParser.parse(this.jsonStreamReader).getAsJsonObject();
+        JsonObject jsonQueryObject = jsonRootObject.getAsJsonObject("query");
+        return jsonQueryObject.getAsJsonObject("pages");
+    }
+
+
+
+
+    private JsonArray getRevisionsArrayFromPagesObject(JsonObject jsonPagesObject){
+        JsonArray jsonRevisionsArray = new JsonArray();
+
+        for (Map.Entry<String, JsonElement> entry : jsonPagesObject.entrySet()){
+            JsonObject jsonRevisionObject = entry.getValue().getAsJsonObject();
+            jsonRevisionsArray = jsonRevisionObject.getAsJsonArray("revisions");
+        }
+
+        return jsonRevisionsArray;
+    }
+
 
 }
