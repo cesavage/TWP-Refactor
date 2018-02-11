@@ -1,10 +1,7 @@
 package edu.bsu.cs222.wikipediaRevisionsUI;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -19,7 +16,7 @@ public class RevisionJsonParser {
         this.inputStreamReader = passedInputStreamReader;
     }
 
-    public List<Revision> createRevisionListFromJson() throws IOException, ParseException {
+    public List<Revision> createRevisionListFromJson() throws ParseException {
         JsonObject wikiPagesObject = new MediaWikiJsonParser(this.inputStreamReader).wikiPagesObject;
         JsonArray revisionsArrayFromJsonObject = new JsonArray();
         List<Revision> revisionsFromJsonArray = new ArrayList<Revision>();
