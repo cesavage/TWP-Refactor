@@ -1,7 +1,6 @@
 package edu.bsu.cs222.wikipediaRevisionsUI;
 
 import java.io.InputStreamReader;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,27 +20,48 @@ public class RevisionCollection {
         return this.revisionsList;
     }
 
-    public Map<String, List<Revision>> createUserRevisionMap() {
-        Map<String, List<Revision>> groupedUsersMap = revisionsList
-                .stream()
-                .collect(Collectors.groupingBy(Revision::getRevisionUserName));
-        return groupedUsersMap;
+    public Map<String, List<Revision>> sortRevisionsByUser() {
+        Map<String, List<Revision>> revisionsGroupedByUser = this.createRevisionsByUserMap();
+        revisionsGroupedByUser = sortRevisionsByUserMapByTimestamp(revisionsGroupedByUser);
+
+        return revisionsGroupedByUser;
     }
 
-
-    public Map<String, List<Revision>> sortRevisionsByUser() {
-        Map<String, List<Revision>> revisionsGroupedByUser = this.createUserRevisionMap();
-
+    private Map<String, List<Revision>> sortRevisionsByUserMapByTimestamp(Map<String, List<Revision>> revisionsGroupedByUser){
         for (Map.Entry<String, List<Revision>> entry : revisionsGroupedByUser.entrySet()) {
             List<Revision> revisionsFromUser = entry.getValue();
 
             Collections.sort(revisionsFromUser, new Comparator<Revision>() {
-                public int compare(Revision revision2, Revision revision1) {
-                    return Integer.valueOf((revision1.localTimeStamp).compareTo(revision2.localTimeStamp));
-                }
-            });
+                        public int compare(Revision revision2, Revision revision1) {
+                            return Integer.valueOf((revision1.localTimeStamp).compareTo(revision2.localTimeStamp));
+                        }
+                    });
         }
+
         return revisionsGroupedByUser;
+    }
+
+
+    private Map<String, List<Revision>> createRevisionsByUserMap() {
+        Map<String, List<Revision>> revisionsByUserMap = revisionsList
+                .stream()
+                .collect(Collectors.groupingBy(Revision::getRevisionUserName));
+        return revisionsByUserMap;
+    }
+
+
+
+
+
+
+    //TODO
+    public Map<String, Integer> recordRevisionsPerUser(){
+        Map<String,Integer> revisionsPerUser = new HashMap<>();
+
+
+
+        return revisionsPerUser;
+
     }
 }
 

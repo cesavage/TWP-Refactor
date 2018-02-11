@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.List;
@@ -108,11 +110,14 @@ public class TestWikipediaRevisions {
     }
 
     @Test
-    public void testGroupRevisionsByUsername() throws ParseException {
+    public void testGroupRevisionsByUsername() throws ParseException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
         RevisionCollection revisionCollection = new RevisionCollection(wikiData);
 
-        Map<String, List<Revision>> groupedRevisions = revisionCollection.createUserRevisionMap();
+        //Reflection for testing private method.
+        Method createRevisionsByUserMap = RevisionCollection.class.getDeclaredMethod("createRevisionsByUserMap");
+        createRevisionsByUserMap.setAccessible(true);
+        Map<String, List<Revision>> groupedRevisions = (Map<String, List<Revision>>) createRevisionsByUserMap.invoke(revisionCollection);
 
         Assert.assertEquals(3, groupedRevisions.size());
     }
@@ -121,14 +126,25 @@ public class TestWikipediaRevisions {
     public void testSortUserMapRevisionsByTimestamp() throws ParseException {
         InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
         RevisionCollection revisionCollection = new RevisionCollection(wikiData);
-        Map<String, List<Revision>> groupedRevisions = revisionCollection.createUserRevisionMap();
-
-        groupedRevisions = revisionCollection.sortRevisionsByUser();
+        Map<String, List<Revision>> groupedRevisions = revisionCollection.sortRevisionsByUser();
 
         List<Revision> targetList = groupedRevisions.get("192.5.211.252");
         String targetTimestamp = targetList.get(0).localTimeStamp.toString();
 
         Assert.assertEquals("2018-02-02 06:08:37.0", targetTimestamp);
+    }
+
+    @Test
+    public void testRecordRevisionsPerUser() throws ParseException {
+        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
+        RevisionCollection revisionCollection = new RevisionCollection(wikiData);
+        Map<String, List<Revision>> groupedRevisions = revisionCollection.sortRevisionsByUser();
+
+        Map<String, Integer> revisionsPerUser = revisionCollection.recordRevisionsPerUser();
+
+        int targetRevisionNumber = revisionsPerUser.get("192.5.211.252");
+
+        Assert.assertEquals(2, targetRevisionNumber);
     }
 //    @Test
 //    public void testSortMultipleContributionAuthor() throws ParseException, IOException {
