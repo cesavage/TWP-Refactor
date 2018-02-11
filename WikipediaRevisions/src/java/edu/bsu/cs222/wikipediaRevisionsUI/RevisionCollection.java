@@ -6,59 +6,44 @@ import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class RevisionCollection {
-
-    InputStreamReader inputStreamReader;
-    List<Revision> revisionsList;
-
+    private InputStreamReader inputStreamReader;
+    private List<Revision> revisionsList;
 
     public RevisionCollection(InputStreamReader inputStream) throws IOException, ParseException {
         this.inputStreamReader = inputStream;
-        revisionsList = this.createRevisionList();
-
+        this.revisionsList = this.createRevisionListFromJson();
     }
-
-
 
     public List<Revision> getRevisionsByNewestFirst() {
-        return this.revisionsList;
-
-    }
-
-    public List<Revision> getRevisionsByOldestFirst(){
-
-
+        //TODO -- Resort this list if the sort could have been changed elsewhere.
         return this.revisionsList;
     }
 
-    private List<Revision> createRevisionList() throws IOException, ParseException {
-
+    private List<Revision> createRevisionListFromJson() throws IOException, ParseException {
         JsonObject wikiPagesObject = new MediaWikiJsonParser(this.inputStreamReader).wikiPagesObject;
-        JsonArray jrevisions = null;
-        List<Revision> localRevisionsList = new ArrayList<Revision>();
+        JsonArray revisionsArrayFromJsonObject = new JsonArray();
+        List<Revision> revisionsFromJsonArray = new ArrayList<Revision>();
 
         for (Map.Entry<String, JsonElement> entry : wikiPagesObject.entrySet()){
-            JsonObject entryObject = entry.getValue().getAsJsonObject();
-            jrevisions = entryObject.getAsJsonArray("revisions");
+            JsonObject revisionsJsonObject = entry.getValue().getAsJsonObject();
+            revisionsArrayFromJsonObject = revisionsJsonObject.getAsJsonArray("revisions");
         }
 
-
-        for(JsonElement crevision : jrevisions){
-            JsonObject revisionObject = crevision.getAsJsonObject();
+        for(JsonElement singleJsonRevision : revisionsArrayFromJsonObject){
+            JsonObject revisionObject = singleJsonRevision.getAsJsonObject();
             String user = revisionObject.get("user").getAsString();
             String date = revisionObject.get("timestamp").getAsString();
 
-            Revision wikiPageRevisionObject = new Revision(user, date);
-            localRevisionsList.add(wikiPageRevisionObject);
+            Revision revision = new Revision(user, date);
+            revisionsFromJsonArray.add(revision);
         }
 
-        return localRevisionsList;
+        return revisionsFromJsonArray;
     }
 
     public  List<Revision> getSortedRevisions()  {
