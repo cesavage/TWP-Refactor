@@ -8,13 +8,9 @@ import edu.bsu.cs222.wikipediaRevisionsUI.RevisionParser;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.ParseException;
-import java.util.List;
+
 import java.util.Map;
 
 public class TestWikipediaRevisions {
@@ -39,8 +35,7 @@ public class TestWikipediaRevisions {
 
         JsonObject firstRevision = jsonRevisionsArray.get(0).getAsJsonObject();
 
-        String firstAuthor = new String();
-        firstAuthor = firstRevision.get("user").getAsString();
+        String firstAuthor = firstRevision.get("user").getAsString();
 
         Assert.assertEquals("ClueBot NG", firstAuthor);
     }
