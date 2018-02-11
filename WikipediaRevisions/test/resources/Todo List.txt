@@ -3,3 +3,5 @@ MediaWikiAPIConnection throws IO error -- needs handled in some way.
 convertFromStringToLocalTimestamp throws parse error -- needs handled in some way.
 
 Is not handling spaces in URL.
+
+Rebuild array list from hashmap after sorting

@@ -137,4 +137,27 @@ public class TestWikipediaRevisions {
         Assert.assertEquals(3, revisionsGroupedByUser.size());
     }
 
+    @Test
+    public void testSortRevisionsInUserToRevisionMapByTimestamp() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
+        InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
+        RevisionParser revisionParser = new RevisionParser(sampleJsonStreamReader);
+
+        List<Revision> revisionsList = revisionParser.createRevisionsListFromJson();
+
+        Map<String, List<Revision>> revisionsGroupedByUser = new HashMap<>();
+        RevisionSorter revisionSorter = new RevisionSorter();
+        revisionsGroupedByUser = revisionSorter.groupRevisionsByUser(revisionsList);
+
+        //Set utility method as accessible.
+        Method sortUserToRevisionMapRevisionsByTimestamp = RevisionSorter.class.getDeclaredMethod("sortUserToRevisionMapRevisionsByTimestamp", Map.class);
+        sortUserToRevisionMapRevisionsByTimestamp.setAccessible(true);
+
+        //Invoke utility exception by reflection.
+        sortUserToRevisionMapRevisionsByTimestamp.invoke(revisionSorter, revisionsGroupedByUser);
+
+        Assert.assertEquals("2018-02-02T10:59:34Z", revisionsGroupedByUser.get("192.5.211.252").get(0).timestamp);
+
+    }
+
 }

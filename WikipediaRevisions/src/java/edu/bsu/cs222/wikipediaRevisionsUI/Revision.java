@@ -1,5 +1,7 @@
 package edu.bsu.cs222.wikipediaRevisionsUI;
 
+import java.sql.Timestamp;
+
 public class Revision {
     public String user;
     public String timestamp;
