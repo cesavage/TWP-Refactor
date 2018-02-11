@@ -57,7 +57,7 @@ public class TestWikipediaRevisions {
 
     @Test
     public void learningTestCreateURLConnection() throws IOException {
-        MediaWikiAPIConnection testConnection = new MediaWikiAPIConnection();
+        MediaWikiAPIConnection testConnection = new MediaWikiAPIConnection("soup");
         InputStreamReader testReader = testConnection.connect();
 
         RevisionParser revisionParser = new RevisionParser();
