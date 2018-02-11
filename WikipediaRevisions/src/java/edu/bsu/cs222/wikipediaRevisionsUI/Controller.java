@@ -25,8 +25,8 @@ public class Controller {
         MediaWikiAPIConnection mediaWikiAPIConnection = new MediaWikiAPIConnection(searchTerm.getText());
         InputStreamReader testConnection = mediaWikiAPIConnection.connect();
 
-        RevisionParser revisionParser = new RevisionParser();
-        List<Revision> revisionList = revisionParser.parse(testConnection);
+        RevisionParser revisionParser = new RevisionParser(testConnection);
+        List<Revision> revisionList = revisionParser.parse();
 
         for(Revision revision : revisionList){
             outputField.appendText(revision.timestamp + "    by    " + revision.user + "\n");

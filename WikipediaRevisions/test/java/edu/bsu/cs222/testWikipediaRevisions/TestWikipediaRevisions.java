@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -37,34 +39,58 @@ public class TestWikipediaRevisions {
         }
 
         JsonObject firstRevision = jsonRevisionsArray.get(0).getAsJsonObject();
-
         String firstAuthor = firstRevision.get("user").getAsString();
 
         Assert.assertEquals("ClueBot NG", firstAuthor);
     }
 
     @Test
-    public void testRevisionParser(){
+    public void testSizeOfRevisionListGeneratedByRevisionParser(){
         InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
         InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
+        RevisionParser revisionParser = new RevisionParser(sampleJsonStreamReader);
 
-        RevisionParser revisionParser = new RevisionParser();
-
-        List<Revision> revisions = revisionParser.parse(sampleJsonStreamReader);
+        List<Revision> revisions = revisionParser.parse();
 
         Assert.assertEquals(4, revisions.size());
     }
 
     @Test
-    public void learningTestCreateURLConnection() throws IOException {
+    public void learningTestGenerateRevisionListFromURL() throws IOException {
         MediaWikiAPIConnection testConnection = new MediaWikiAPIConnection("soup");
         InputStreamReader testReader = testConnection.connect();
+        RevisionParser revisionParser = new RevisionParser(testReader);
 
-        RevisionParser revisionParser = new RevisionParser();
-
-        List<Revision> revisions = revisionParser.parse(testReader);
+        List<Revision> revisions = revisionParser.parse();
 
         Assert.assertEquals(30, revisions.size());
+    }
+
+    @Test
+    public void testRevisionParserUtilityMethodGetPagesObjectFromJsonString() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        MediaWikiAPIConnection testConnection = new MediaWikiAPIConnection("soup");
+        InputStreamReader testReader = testConnection.connect();
+        RevisionParser revisionParser = new RevisionParser(testReader);
+
+        //Set utility method as accessible and invoke by reflection.
+        Method method = RevisionParser.class.getDeclaredMethod("getPagesObjectFromJsonString");
+        method.setAccessible(true);
+        JsonObject jsonPagesObject = (JsonObject) method.invoke(revisionParser);
+
+        JsonObject jsonRevisionObject = new JsonObject();
+        for (Map.Entry<String, JsonElement> entry : jsonPagesObject.entrySet()){
+            jsonRevisionObject = entry.getValue().getAsJsonObject();
+        }
+
+        Assert.assertNotEquals(null, jsonRevisionObject.getAsJsonArray("revisions"));
+    }
+
+    @Test
+    public void testRevisionParserUtilityMethodGetJsonArrayFromPagesObject(){
+
+        JsonArray revisions = new JsonArray();
+
+        Assert.assertEquals(4, revisions.size());
     }
 
 }

@@ -3,6 +3,7 @@ package edu.bsu.cs222.wikipediaRevisionsUI;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import jdk.internal.util.xml.impl.Input;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -11,14 +12,25 @@ import java.util.Map;
 
 public class RevisionParser {
     private com.google.gson.JsonParser gsonJsonParser = new com.google.gson.JsonParser();
+    private InputStreamReader jsonStreamReader;
 
-    public List<Revision> parse(InputStreamReader sampleJsonStreamReader){
+    public RevisionParser(InputStreamReader jsonStreamReader){
+        this.jsonStreamReader = jsonStreamReader;
+    }
 
-        JsonArray jsonRevisionsArray = new JsonArray();
-
-        JsonObject jsonRootObject = gsonJsonParser.parse(sampleJsonStreamReader).getAsJsonObject();
+    private JsonObject getPagesObjectFromJsonString(){
+        JsonObject jsonRootObject = gsonJsonParser.parse(this.jsonStreamReader).getAsJsonObject();
         JsonObject jsonQueryObject = jsonRootObject.getAsJsonObject("query");
         JsonObject jsonPagesObject = jsonQueryObject.getAsJsonObject("pages");
+
+        return jsonPagesObject;
+    }
+
+
+
+    public List<Revision> parse(){
+        JsonObject jsonPagesObject = this.getPagesObjectFromJsonString();
+        JsonArray jsonRevisionsArray = new JsonArray();
 
         for (Map.Entry<String, JsonElement> entry : jsonPagesObject.entrySet()){
             JsonObject jsonRevisionObject = entry.getValue().getAsJsonObject();

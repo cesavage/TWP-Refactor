@@ -1,0 +1,2 @@
+MediaWikiAPIConnection throws IO error -- needs handled in some way.
+

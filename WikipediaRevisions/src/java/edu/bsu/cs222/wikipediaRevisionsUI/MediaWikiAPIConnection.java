@@ -6,7 +6,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class MediaWikiAPIConnection {
-    @SuppressWarnings("UnnecessaryLocalVariable")
+    @SuppressWarnings("UnnecessaryLocalVariable") //Allow for different InputStreamReaders to be created in the future using the same input.
     private String pageTitle;
 
     public MediaWikiAPIConnection(String pageTitle) {
@@ -14,12 +14,11 @@ public class MediaWikiAPIConnection {
     }
 
     public InputStreamReader connect() throws IOException {
-        URL mediaWikiAPIConnection = new URL("https://en.wikipedia.org/w/api.php?action=query&format=json&prop=revisions&titles="+this.pageTitle+"&rvlimit=30");
-        URLConnection connection = mediaWikiAPIConnection.openConnection();
+        String baseApiCall = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=revisions&rvlimit=30&titles=";
+        URL apiCall = new URL( baseApiCall + this.pageTitle);
+        URLConnection apiConnection = apiCall.openConnection();
 
-        return new InputStreamReader(connection.getInputStream());
+        return new InputStreamReader(apiConnection.getInputStream());
     }
-
-
 
 }
