@@ -6,7 +6,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class MediaWikiAPIConnection {
-    private String pageTitle = new String();
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    private String pageTitle;
 
     public MediaWikiAPIConnection(String pageTitle) {
         this.pageTitle = pageTitle;
@@ -18,6 +19,7 @@ public class MediaWikiAPIConnection {
 
         return new InputStreamReader(connection.getInputStream());
     }
+
 
 
 }
