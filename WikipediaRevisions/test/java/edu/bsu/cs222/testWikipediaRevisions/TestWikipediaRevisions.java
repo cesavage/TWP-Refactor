@@ -1,164 +1,61 @@
 package edu.bsu.cs222.testWikipediaRevisions;
 
-import edu.bsu.cs222.wikipediaRevisionsUI.MediaWikiConnection;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import edu.bsu.cs222.wikipediaRevisionsUI.Revision;
-import edu.bsu.cs222.wikipediaRevisionsUI.RevisionCollection;
+import edu.bsu.cs222.wikipediaRevisionsUI.RevisionParser;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
 public class TestWikipediaRevisions {
-/*
-    @Test
-    public void testGetFirstEditorUsername() {
-
-        MediaWikiJsonParser testParser = new MediaWikiJsonParser();
-        Assert.assertEquals("Samf4u", testParser.getFirstRevisionEditorUsername());
-
-
-    }
-*/
-/*
-    @Test
-    public void testGetLocalTimestampOfLastRevision() throws ParseException {
-        MediaWikiJsonParser testParser = new MediaWikiJsonParser();
-        Assert.assertEquals("2018-01-30 17:14:55.0", testParser.getTimestampInLocalTime().toString());
-    }
- */
-/*
-    @Test
-    public void testGetFirstRevisionObject() throws ParseException {
-        MediaWikiJsonParser testParser = new MediaWikiJsonParser();
-        Revision firstRevision = testParser.getFirstRevision();
-
-        Assert.assertEquals("Samf4u", firstRevision.username);
-        Assert.assertEquals("2018-01-30 17:14:55.0", firstRevision.localTimeStamp.toString());
-
-    }
-*/
-/*
-    @Test
-    public void testCreateIterator() {
-        MediaWikiJsonParser testParser = new MediaWikiJsonParser();
-
-        JsonArray emptyArray = new JsonArray();
-        Iterator testIterator = testParser.getRevisions().iterator();
-
-        Assert.assertTrue(testIterator.hasNext());
-    }
-
-*/
-
 
     @Test
-    public void testCreateJsonInputStreamReader() throws IOException {
-        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
+    public void learningTestReadFirstRevisionAuthorFromSampleData(){
+        com.google.gson.JsonParser gsonJsonParser = new com.google.gson.JsonParser();
 
-        Assert.assertFalse(wikiData.read() == -1); //inputStream.read() == -1 means end of file / empty file.
+        InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
+        InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
+
+        JsonArray jsonRevisionsArray = new JsonArray();
+
+        JsonObject jsonRootObject = gsonJsonParser.parse(sampleJsonStreamReader).getAsJsonObject();
+        JsonObject jsonQueryObject = jsonRootObject.getAsJsonObject("query");
+        JsonObject jsonPagesObject = jsonQueryObject.getAsJsonObject("pages");
+
+        for (Map.Entry<String, JsonElement> entry : jsonPagesObject.entrySet()){
+            JsonObject jsonRevisionObject = entry.getValue().getAsJsonObject();
+            jsonRevisionsArray = jsonRevisionObject.getAsJsonArray("revisions");
         }
 
-    @Test
-    public void testCreateRevisionObjectList() throws ParseException, IOException {
-        InputStreamReader inputStreamReader = new MediaWikiConnection("sample.json").createInputStreamReader();
-        RevisionCollection revisionCollection = new RevisionCollection(inputStreamReader);
+        JsonObject firstRevision = jsonRevisionsArray.get(0).getAsJsonObject();
 
-        Assert.assertEquals(4, revisionCollection.sortRevisionsByNewestFirst().size());
+        String firstAuthor = new String();
+        firstAuthor = firstRevision.get("user").getAsString();
+
+        Assert.assertEquals("ClueBot NG", firstAuthor);
     }
 
     @Test
-    public void testNewestRevisionObjectAttributes() throws ParseException, IOException {
-        InputStreamReader inputStreamReader = new MediaWikiConnection("sample.json").createInputStreamReader();
-        RevisionCollection revisionCollection = new RevisionCollection(inputStreamReader);
+    public void testRevisionParser(){
+        InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
+        InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
 
-        Revision newestRevision = revisionCollection.sortRevisionsByNewestFirst().get(0);
+        RevisionParser revisionParser = new RevisionParser();
 
-        //TODO One assert per test.
-        Assert.assertEquals("ClueBot NG", newestRevision.username);
-        Assert.assertEquals("2018-02-02 06:08:40.0", newestRevision.localTimeStamp.toString());
+        Revision firstRevision = revisionParser.parse(sampleJsonStreamReader);
+
+        Assert.assertEquals("ClueBot NG", firstRevision.username);
     }
-
-    @Test
-    public void testOldestRevisionObjectAttributes() throws ParseException, IOException {
-        InputStreamReader inputStreamReader = new MediaWikiConnection("sample.json").createInputStreamReader();
-        RevisionCollection revisionCollection = new RevisionCollection(inputStreamReader);
-
-        Revision oldestRevision = revisionCollection.sortRevisionsByNewestFirst().get(3);
-
-        //TODO One assert per test.
-        Assert.assertEquals("Samf4u", oldestRevision.username);
-        Assert.assertEquals("2018-01-30 17:14:55.0", oldestRevision.localTimeStamp.toString());
-    }
-
-    @Test
-    public void testGetRevisionsByNewestFirst() throws IOException, ParseException {
-        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
-        RevisionCollection revisionCollection = new RevisionCollection(wikiData);
-
-        Revision newestRevision = revisionCollection.sortRevisionsByNewestFirst().get(0);
-
-        //TODO One assert per test.
-        Assert.assertEquals("ClueBot NG", newestRevision.username);
-        Assert.assertEquals("2018-02-02 06:08:40.0", newestRevision.localTimeStamp.toString());
-    }
-
-    @Test
-    public void testGroupRevisionsByUsername() throws ParseException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
-        RevisionCollection revisionCollection = new RevisionCollection(wikiData);
-
-        //Reflection for testing private method.
-        Method createRevisionsByUserMap = RevisionCollection.class.getDeclaredMethod("createRevisionsByUserMap");
-        createRevisionsByUserMap.setAccessible(true);
-        Map<String, List<Revision>> groupedRevisions = (Map<String, List<Revision>>) createRevisionsByUserMap.invoke(revisionCollection);
-
-        Assert.assertEquals(3, groupedRevisions.size());
-    }
-
-    @Test
-    public void testSortUserMapRevisionsByTimestamp() throws ParseException {
-        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
-        RevisionCollection revisionCollection = new RevisionCollection(wikiData);
-        Map<String, List<Revision>> groupedRevisions = revisionCollection.sortRevisionsByUser();
-
-        List<Revision> targetList = groupedRevisions.get("192.5.211.252");
-        String targetTimestamp = targetList.get(0).localTimeStamp.toString();
-
-        Assert.assertEquals("2018-02-02 06:08:37.0", targetTimestamp);
-    }
-
-    @Test
-    public void testRecordRevisionsPerUser() throws ParseException {
-        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
-        RevisionCollection revisionCollection = new RevisionCollection(wikiData);
-        Map<String, List<Revision>> groupedRevisions = revisionCollection.sortRevisionsByUser();
-
-        Map<String, Integer> revisionsPerUser = revisionCollection.recordRevisionsPerUser();
-
-        int targetRevisionNumber = revisionsPerUser.get("192.5.211.252");
-
-        Assert.assertEquals(2, targetRevisionNumber);
-    }
-//    @Test
-//    public void testSortMultipleContributionAuthor() throws ParseException, IOException {
-//        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
-//        RevisionCollection revisionCollection = new RevisionCollection(wikiData);
-//
-//
-//        List<Revision> sortedRevisions = revisionCollection.getSortedRevisions();
-//
-//        for(Revision currentRevision : sortedRevisions){
-//            System.out.println(currentRevision.username);
-//            System.out.println(currentRevision.localTimeStamp);
-//            System.out.println("\n");
-//        }
 
 
 
