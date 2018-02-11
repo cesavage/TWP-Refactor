@@ -1,8 +1,8 @@
 package edu.bsu.cs222.wikipediaRevisionsUI;
 
 public class Revision {
-    private String user;
-    private String timestamp;
+    public String user;
+    public String timestamp;
 
     Revision(String user, String timestamp){
         this.user = user;

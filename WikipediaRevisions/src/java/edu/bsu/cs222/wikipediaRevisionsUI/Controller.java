@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -28,12 +29,13 @@ public class Controller {
         MediaWikiAPIConnection mediaWikiAPIConnection = new MediaWikiAPIConnection("soup");
         InputStreamReader testConnection = mediaWikiAPIConnection.connect();
 
-        BufferedReader response = new BufferedReader(testConnection);
+        RevisionParser revisionParser = new RevisionParser();
+        List<Revision> revisionList = revisionParser.parse(testConnection);
 
-        String inputLine;
-        while ((inputLine = response.readLine()) != null)
-            outputField.appendText(inputLine);
-        response.close();
+        for(Revision revision : revisionList){
+            outputField.appendText(revision.timestamp + "    by    " + revision.user + "\n");
+
+        }
 
     }
 }

@@ -65,11 +65,6 @@ public class TestWikipediaRevisions {
         List<Revision> revisions = revisionParser.parse(testReader);
 
         Assert.assertEquals(30, revisions.size());
-
-
     }
-
-
-
 
 }
