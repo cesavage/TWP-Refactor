@@ -16,7 +16,8 @@ public class RevisionCollection {
 
     public RevisionCollection(InputStreamReader inputStream) throws IOException, ParseException {
         this.inputStreamReader = inputStream;
-        this.revisionsList = this.createRevisionListFromJson();
+        RevisionJsonParser revisionJsonParser = new RevisionJsonParser(inputStream);
+        this.revisionsList = revisionJsonParser.createRevisionListFromJson();
     }
 
     public List<Revision> getRevisionsByNewestFirst() {
@@ -24,27 +25,7 @@ public class RevisionCollection {
         return this.revisionsList;
     }
 
-    private List<Revision> createRevisionListFromJson() throws IOException, ParseException {
-        JsonObject wikiPagesObject = new MediaWikiJsonParser(this.inputStreamReader).wikiPagesObject;
-        JsonArray revisionsArrayFromJsonObject = new JsonArray();
-        List<Revision> revisionsFromJsonArray = new ArrayList<Revision>();
 
-        for (Map.Entry<String, JsonElement> entry : wikiPagesObject.entrySet()){
-            JsonObject revisionsJsonObject = entry.getValue().getAsJsonObject();
-            revisionsArrayFromJsonObject = revisionsJsonObject.getAsJsonArray("revisions");
-        }
-
-        for(JsonElement singleJsonRevision : revisionsArrayFromJsonObject){
-            JsonObject revisionObject = singleJsonRevision.getAsJsonObject();
-            String user = revisionObject.get("user").getAsString();
-            String date = revisionObject.get("timestamp").getAsString();
-
-            Revision revision = new Revision(user, date);
-            revisionsFromJsonArray.add(revision);
-        }
-
-        return revisionsFromJsonArray;
-    }
 
     public  List<Revision> getSortedRevisions()  {
        // List<Revision> sortedList = new ArrayList<Revision>();
