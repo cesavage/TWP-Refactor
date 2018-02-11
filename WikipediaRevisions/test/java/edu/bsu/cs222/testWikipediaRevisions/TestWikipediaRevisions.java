@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,18 +47,18 @@ public class TestWikipediaRevisions {
     }
 
     @Test
-    public void testSizeOfRevisionListGeneratedByRevisionParser(){
+    public void testSizeOfRevisionListGeneratedByRevisionParser() throws ParseException {
         InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
         InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
         RevisionParser revisionParser = new RevisionParser(sampleJsonStreamReader);
 
         List<Revision> revisions = revisionParser.createRevisionsListFromJson();
 
-        Assert.assertEquals(4, revisions.size());
+        Assert.assertEquals(6, revisions.size());
     }
 
     @Test
-    public void learningTestGenerateRevisionListFromURL() throws IOException {
+    public void learningTestGenerateRevisionListFromURL() throws IOException, ParseException {
         MediaWikiAPIConnection testConnection = new MediaWikiAPIConnection("soup");
         InputStreamReader testReader = testConnection.connect();
         RevisionParser revisionParser = new RevisionParser(testReader);
@@ -103,7 +104,7 @@ public class TestWikipediaRevisions {
         JsonObject jsonPagesObject = (JsonObject) getPagesMethod.invoke(revisionParser);
         JsonArray jsonRevisionsArray = (JsonArray) getArrayMethod.invoke(revisionParser, jsonPagesObject);
 
-        Assert.assertEquals(4, jsonRevisionsArray.size());
+        Assert.assertEquals(6, jsonRevisionsArray.size());
     }
 
     @Test
@@ -123,7 +124,7 @@ public class TestWikipediaRevisions {
     }
 
     @Test
-    public void testGroupRevisionsByUser(){
+    public void testGroupRevisionsByUser() throws ParseException {
         InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
         InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
         RevisionParser revisionParser = new RevisionParser(sampleJsonStreamReader);
@@ -138,7 +139,7 @@ public class TestWikipediaRevisions {
     }
 
     @Test
-    public void testSortRevisionsInUserToRevisionMapByTimestamp() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testSortRevisionsInUserToRevisionMapByTimestamp() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ParseException {
         InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
         InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
         RevisionParser revisionParser = new RevisionParser(sampleJsonStreamReader);
@@ -156,7 +157,7 @@ public class TestWikipediaRevisions {
         //Invoke utility exception by reflection.
         sortUserToRevisionMapRevisionsByTimestamp.invoke(revisionSorter, revisionsGroupedByUser);
 
-        Assert.assertEquals("2018-02-02T10:59:34Z", revisionsGroupedByUser.get("192.5.211.252").get(0).timestamp);
+        Assert.assertEquals("2018-02-09 06:08:37.0", revisionsGroupedByUser.get("192.5.211.252").get(0).timestamp.toString());
 
     }
 

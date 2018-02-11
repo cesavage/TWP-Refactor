@@ -21,7 +21,7 @@ public class RevisionParser {
 
 
 
-    public List<Revision> createRevisionsListFromJson(){
+    public List<Revision> createRevisionsListFromJson() throws ParseException {
         JsonObject jsonPagesObject = this.getPagesObjectFromJsonString();
         JsonArray jsonRevisionsArray = this.getRevisionsArrayFromPagesObject(jsonPagesObject);
 
@@ -30,7 +30,8 @@ public class RevisionParser {
         for (JsonElement jsonSingleRevision : jsonRevisionsArray){
             JsonObject jsonCurrentRevision = jsonSingleRevision.getAsJsonObject();
             String user = jsonCurrentRevision.get("user").getAsString();
-            String timestamp = jsonCurrentRevision.get("timestamp").getAsString();
+            String stringTime = jsonCurrentRevision.get("timestamp").getAsString();
+            Timestamp timestamp = convertFromStringToLocalTimestamp(stringTime);
 
             Revision currentRevision = new Revision(user, timestamp);
             revisionList.add(currentRevision);

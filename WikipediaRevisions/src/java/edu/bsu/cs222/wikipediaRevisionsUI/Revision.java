@@ -4,15 +4,14 @@ import java.sql.Timestamp;
 
 public class Revision {
     public String user;
-    public String timestamp;
+    public Timestamp timestamp;
 
-    Revision(String user, String timestamp){
+    Revision(String user, Timestamp timestamp){
         this.user = user;
         this.timestamp = timestamp;
     }
 
-    public String getUser(){
-        return this.user;
+    public String getUser(){ return this.user;
     }
 }
 

@@ -28,6 +28,13 @@ public class RevisionSorter {
 
     //TODO Start here.
     private void sortUserToRevisionMapRevisionsByTimestamp(Map<String, List<Revision>> userToRevisionMap) {
+        for (Map.Entry<String, List<Revision>> entry : userToRevisionMap.entrySet()) {
+            List<Revision> revisionsFromUser = entry.getValue();
 
+            Collections.sort(revisionsFromUser, new Comparator<Revision>() {
+                public int compare(Revision revision1, Revision revision2) {
+                    return Integer.valueOf((revision2.timestamp).compareTo(revision1.timestamp));
+                }
+            });
     }
-}
+}}

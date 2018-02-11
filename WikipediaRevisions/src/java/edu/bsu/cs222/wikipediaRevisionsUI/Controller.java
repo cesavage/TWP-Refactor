@@ -6,6 +6,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -21,7 +22,7 @@ public class Controller {
 
     @SuppressWarnings("unused")
     @FXML
-    public void getRevisions() throws IOException {
+    public void getRevisions() throws IOException, ParseException {
         MediaWikiAPIConnection mediaWikiAPIConnection = new MediaWikiAPIConnection(searchTerm.getText());
         InputStreamReader testConnection = mediaWikiAPIConnection.connect();
 
