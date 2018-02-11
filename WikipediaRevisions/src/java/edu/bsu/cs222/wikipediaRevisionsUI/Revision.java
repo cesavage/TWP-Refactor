@@ -1,15 +1,18 @@
 package edu.bsu.cs222.wikipediaRevisionsUI;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
-public class Revision implements Comparable<Revision>{
+public class Revision {
 
     public String username;
     public Timestamp localTimeStamp;
 
-    Revision(String username, Timestamp localTimeStamp){
+    Revision(String username, String timeStamp) throws ParseException {
         this.username=username;
-        this.localTimeStamp = localTimeStamp;
+        this.localTimeStamp = this.getTimestampInLocalTime(timeStamp);
     }
 
     public String getRevisionUserName(){
@@ -18,8 +21,12 @@ public class Revision implements Comparable<Revision>{
         return this.username;
     }
 
-    //TODO
-    public int compareTo(Revision compareDate) {
-        return 0;
+    private Timestamp getTimestampInLocalTime(String timestamp) throws ParseException {
+        SimpleDateFormat wikiTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+        wikiTimeFormat.setTimeZone(TimeZone.getTimeZone("Z"));
+        java.util.Date parsedDate = wikiTimeFormat.parse(timestamp);
+        Timestamp localTimestamp = new Timestamp(parsedDate.getTime());
+
+        return localTimestamp;
     }
 }

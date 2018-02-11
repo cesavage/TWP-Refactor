@@ -95,38 +95,38 @@ public class TestWikipediaRevisions {
         Assert.assertEquals("2018-01-30 17:14:55.0", oldestRevision.localTimeStamp.toString());
     }
 
-    /*
+
     @Test
-    public void testGetRevisionsByOldestFirst() throws IOException, ParseException {
+    public void testGetRevisionsByNewestFirst() throws IOException, ParseException {
         InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
         RevisionCollection revisionCollection = new RevisionCollection(wikiData);
 
         Revision newestRevision = revisionCollection.getRevisionsByNewestFirst().get(0);
 
         //TODO One assert per test.
-        Assert.assertEquals("Samf4u", newestRevision.username);
-        Assert.assertEquals("2018-01-30 17:14:55.0", newestRevision.localTimeStamp.toString());
+        Assert.assertEquals("ClueBot NG", newestRevision.username);
+        Assert.assertEquals("2018-02-02 06:08:40.0", newestRevision.localTimeStamp.toString());
 
     }
-    */
-
-    @Test
-    public void testSortMultipleContributionAuthor() throws ParseException, IOException {
-        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
-        RevisionCollection revisionCollection = new RevisionCollection(wikiData);
 
 
-        List<Revision> sortedRevisions = revisionCollection.getSortedRevisions();
+//    @Test
+//    public void testSortMultipleContributionAuthor() throws ParseException, IOException {
+//        InputStreamReader wikiData = new MediaWikiConnection("sample.json").createInputStreamReader();
+//        RevisionCollection revisionCollection = new RevisionCollection(wikiData);
+//
+//
+//        List<Revision> sortedRevisions = revisionCollection.getSortedRevisions();
+//
+//        for(Revision currentRevision : sortedRevisions){
+//            System.out.println(currentRevision.username);
+//            System.out.println(currentRevision.localTimeStamp);
+//            System.out.println("\n");
+//        }
 
-        for(Revision currentRevision : sortedRevisions){
-            System.out.println(currentRevision.username);
-            System.out.println(currentRevision.localTimeStamp);
-            System.out.println("\n");
-        }
 
 
 
 
-    }
 
 }

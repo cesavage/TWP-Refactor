@@ -24,14 +24,7 @@ public class RevisionCollection {
 
     }
 
-    public Timestamp getTimestampInLocalTime(String timestamp) throws ParseException {
-        SimpleDateFormat wikiTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
-        wikiTimeFormat.setTimeZone(TimeZone.getTimeZone("Z"));
-        java.util.Date parsedDate = wikiTimeFormat.parse(timestamp);
-        Timestamp localTimestamp = new Timestamp(parsedDate.getTime());
 
-        return localTimestamp;
-    }
 
     public List<Revision> getRevisionsByNewestFirst() {
         return this.revisionsList;
@@ -60,9 +53,8 @@ public class RevisionCollection {
             JsonObject revisionObject = crevision.getAsJsonObject();
             String user = revisionObject.get("user").getAsString();
             String date = revisionObject.get("timestamp").getAsString();
-            Timestamp timestamp = getTimestampInLocalTime(date);
 
-            Revision wikiPageRevisionObject = new Revision(user, timestamp);
+            Revision wikiPageRevisionObject = new Revision(user, date);
             localRevisionsList.add(wikiPageRevisionObject);
         }
 
