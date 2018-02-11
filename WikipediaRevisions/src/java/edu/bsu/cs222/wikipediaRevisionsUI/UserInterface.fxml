@@ -29,6 +29,6 @@
             </HBox>
          </children>
       </HBox>
-      <Button mnemonicParsing="false" onAction="#countWords" text="Get Revisions" />
+      <Button mnemonicParsing="false" onAction="#getRevisions" text="Get Revisions" />
    </children>
 </VBox>

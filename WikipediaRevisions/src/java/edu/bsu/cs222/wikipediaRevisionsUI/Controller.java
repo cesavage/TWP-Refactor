@@ -2,6 +2,7 @@ package edu.bsu.cs222.wikipediaRevisionsUI;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 import java.io.BufferedReader;
@@ -14,6 +15,7 @@ import java.util.concurrent.Executors;
 
 public class Controller {
 
+    public TextArea outputField;
     @FXML
     private TextField urlField;
 
@@ -22,32 +24,16 @@ public class Controller {
 
     @SuppressWarnings("unused")
     @FXML
-    public void countWords(ActionEvent actionEvent) {
-        try {
-            final URL url = new URL(urlField.getText());
-            executor.execute(new Runnable() {
+    public void getRevisions() throws IOException {
+        MediaWikiAPIConnection mediaWikiAPIConnection = new MediaWikiAPIConnection("soup");
+        InputStreamReader testConnection = mediaWikiAPIConnection.connect();
 
-                public void run() {
-                   // anonymous inner class
+        BufferedReader response = new BufferedReader(testConnection);
 
-                    try {
-                        BufferedReader reader;
-                        reader = new BufferedReader(new InputStreamReader(url.openStream()));
-                        String line;
-                        while ((line = reader.readLine()) != null){
-                            System.out.println(line);
+        String inputLine;
+        while ((inputLine = response.readLine()) != null)
+            outputField.appendText(inputLine);
+        response.close();
 
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }
-            });
-
-
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
