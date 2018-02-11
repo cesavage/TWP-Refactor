@@ -60,6 +60,8 @@ public class RevisionParser {
         return jsonRevisionsArray;
     }
 
+
+
     private Timestamp convertFromStringToLocalTimestamp(String timestamp) throws ParseException {
         SimpleDateFormat wikiDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
         wikiDateTimeFormat.setTimeZone(TimeZone.getTimeZone("Z"));

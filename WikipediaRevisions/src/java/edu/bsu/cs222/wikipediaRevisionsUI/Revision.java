@@ -8,6 +8,10 @@ public class Revision {
         this.user = user;
         this.timestamp = timestamp;
     }
+
+    public String getUser(){
+        return this.user;
+    }
 }
 
 

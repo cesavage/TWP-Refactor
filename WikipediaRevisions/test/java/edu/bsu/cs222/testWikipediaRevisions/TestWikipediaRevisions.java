@@ -6,17 +6,16 @@ import com.google.gson.JsonObject;
 import edu.bsu.cs222.wikipediaRevisionsUI.MediaWikiAPIConnection;
 import edu.bsu.cs222.wikipediaRevisionsUI.Revision;
 import edu.bsu.cs222.wikipediaRevisionsUI.RevisionParser;
+import edu.bsu.cs222.wikipediaRevisionsUI.RevisionSorter;
 import org.junit.Assert;
 import org.junit.Test;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -121,6 +120,21 @@ public class TestWikipediaRevisions {
         Timestamp timestamp = (Timestamp) convertRevisionTimeFromStringToTimeStamp.invoke(revisionParser, "2018-02-02T11:08:37Z");
 
         Assert.assertEquals("2018-02-02 06:08:37.0", timestamp.toString());
+    }
+
+    @Test
+    public void testGroupRevisionsByUser(){
+        InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
+        InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
+        RevisionParser revisionParser = new RevisionParser(sampleJsonStreamReader);
+
+        List<Revision> revisionsList = revisionParser.createRevisionsListFromJson();
+
+        Map<String, List<Revision>> revisionsGroupedByUser = new HashMap<>();
+        RevisionSorter revisionSorter = new RevisionSorter();
+        revisionsGroupedByUser = revisionSorter.groupRevisionsByUser(revisionsList);
+
+        Assert.assertEquals(3, revisionsGroupedByUser.size());
     }
 
 }
