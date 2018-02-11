@@ -15,6 +15,8 @@ import java.io.InputStreamReader;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +52,7 @@ public class TestWikipediaRevisions {
         InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
         RevisionParser revisionParser = new RevisionParser(sampleJsonStreamReader);
 
-        List<Revision> revisions = revisionParser.parse();
+        List<Revision> revisions = revisionParser.createRevisionsListFromJson();
 
         Assert.assertEquals(4, revisions.size());
     }
@@ -61,7 +63,7 @@ public class TestWikipediaRevisions {
         InputStreamReader testReader = testConnection.connect();
         RevisionParser revisionParser = new RevisionParser(testReader);
 
-        List<Revision> revisions = revisionParser.parse();
+        List<Revision> revisions = revisionParser.createRevisionsListFromJson();
 
         Assert.assertEquals(30, revisions.size());
     }
@@ -103,6 +105,22 @@ public class TestWikipediaRevisions {
         JsonArray jsonRevisionsArray = (JsonArray) getArrayMethod.invoke(revisionParser, jsonPagesObject);
 
         Assert.assertEquals(4, jsonRevisionsArray.size());
+    }
+
+    @Test
+    public void testConvertTimestampFromStringToLocalDateTime() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        //Set utility method as accessible.
+        InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
+        InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
+        RevisionParser revisionParser = new RevisionParser(sampleJsonStreamReader);
+        Method convertRevisionTimeFromStringToTimeStamp = RevisionParser.class.getDeclaredMethod("convertFromStringToLocalTimestamp", String.class);
+        convertRevisionTimeFromStringToTimeStamp.setAccessible(true);
+
+        //Invoke utility method by reflection.
+        Timestamp timestamp = (Timestamp) convertRevisionTimeFromStringToTimeStamp.invoke(revisionParser, "2018-02-02T11:08:37Z");
+
+        Assert.assertEquals("2018-02-02 06:08:37.0", timestamp.toString());
     }
 
 }

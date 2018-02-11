@@ -26,7 +26,7 @@ public class Controller {
         InputStreamReader testConnection = mediaWikiAPIConnection.connect();
 
         RevisionParser revisionParser = new RevisionParser(testConnection);
-        List<Revision> revisionList = revisionParser.parse();
+        List<Revision> revisionList = revisionParser.createRevisionsListFromJson();
 
         for(Revision revision : revisionList){
             outputField.appendText(revision.timestamp + "    by    " + revision.user + "\n");

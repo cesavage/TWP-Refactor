@@ -5,9 +5,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class RevisionParser {
     private com.google.gson.JsonParser gsonJsonParser = new com.google.gson.JsonParser();
@@ -19,7 +21,7 @@ public class RevisionParser {
 
 
 
-    public List<Revision> parse(){
+    public List<Revision> createRevisionsListFromJson(){
         JsonObject jsonPagesObject = this.getPagesObjectFromJsonString();
         JsonArray jsonRevisionsArray = this.getRevisionsArrayFromPagesObject(jsonPagesObject);
 
@@ -58,5 +60,10 @@ public class RevisionParser {
         return jsonRevisionsArray;
     }
 
-
+    private Timestamp convertFromStringToLocalTimestamp(String timestamp) throws ParseException {
+        SimpleDateFormat wikiDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+        wikiDateTimeFormat.setTimeZone(TimeZone.getTimeZone("Z"));
+        java.util.Date parsedTimeStamp = wikiDateTimeFormat.parse(timestamp);
+        return new Timestamp(parsedTimeStamp.getTime());
+    }
 }
