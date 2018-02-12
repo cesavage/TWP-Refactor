@@ -4,16 +4,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class RevisionSorter {
+
     public Map<String, List<Revision>> groupRevisionsByUser(List<Revision> revisionsList) {
-        return this.createUserToRevisionMap(revisionsList);
+        Map<String, List<Revision>> userToRevisionMap = this.createUserToRevisionMap(revisionsList);
+        this.sortUserToRevisionMapRevisionsByTimestamp(userToRevisionMap);
+
+        return userToRevisionMap;
     }
+
 
 
     private Map<String, List<Revision>> createUserToRevisionMap(List<Revision> revisionsList) {
         return revisionsList.stream().collect(Collectors.groupingBy(Revision::getUser));
     }
 
-    //TODO Start here.
+
+
     private void sortUserToRevisionMapRevisionsByTimestamp(Map<String, List<Revision>> userToRevisionMap) {
         for (Map.Entry<String, List<Revision>> entry : userToRevisionMap.entrySet()) {
             List<Revision> revisionsFromUser = entry.getValue();
@@ -26,7 +32,7 @@ public class RevisionSorter {
     }
 }
 
-
+//TODO rebuild array list
 //Rebuild array list
     // ArrayList<Revision> groupedRevisionsList = new ArrayList<Revision>();
 //        for (Map.Entry<String, List<Revision>> entry: userToRevisionMap.entrySet()){

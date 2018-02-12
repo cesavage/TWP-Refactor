@@ -123,7 +123,7 @@ public class TestWikipediaRevisions {
     }
 
     @Test
-    public void testGroupRevisionsByUser() throws ParseException {
+    public void testGroupRevisionsByUser() throws ParseException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
         InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
         RevisionParser revisionParser = new RevisionParser(sampleJsonStreamReader);
@@ -132,8 +132,12 @@ public class TestWikipediaRevisions {
 
         Map<String, List<Revision>> revisionsGroupedByUser;
 
+        //Set utility method as accessible.
+        Method createUserToRevisionMap = RevisionSorter.class.getDeclaredMethod("createUserToRevisionMap", List.class);
+        createUserToRevisionMap.setAccessible(true);
+
         RevisionSorter revisionSorter = new RevisionSorter();
-        revisionsGroupedByUser = revisionSorter.groupRevisionsByUser(revisionsList);
+        revisionsGroupedByUser = (Map<String, List<Revision>>) createUserToRevisionMap.invoke(revisionSorter, revisionsList);
 
         Assert.assertEquals(3, revisionsGroupedByUser.size());
     }
@@ -148,8 +152,12 @@ public class TestWikipediaRevisions {
 
         Map<String, List<Revision>> revisionsGroupedByUser;
 
+        //Set utility method as accessible
+        Method createUserToRevisionMap = RevisionSorter.class.getDeclaredMethod("createUserToRevisionMap", List.class);
+        createUserToRevisionMap.setAccessible(true);
+
         RevisionSorter revisionSorter = new RevisionSorter();
-        revisionsGroupedByUser = revisionSorter.groupRevisionsByUser(revisionsList);
+        revisionsGroupedByUser = (Map<String, List<Revision>>) createUserToRevisionMap.invoke(revisionSorter, revisionsList);
 
         //Set utility method as accessible.
         Method sortUserToRevisionMapRevisionsByTimestamp = RevisionSorter.class.getDeclaredMethod("sortUserToRevisionMapRevisionsByTimestamp", Map.class);
