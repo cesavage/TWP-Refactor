@@ -16,7 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -131,7 +130,8 @@ public class TestWikipediaRevisions {
 
         List<Revision> revisionsList = revisionParser.createRevisionsListFromJson();
 
-        Map<String, List<Revision>> revisionsGroupedByUser = new HashMap<>();
+        Map<String, List<Revision>> revisionsGroupedByUser;
+
         RevisionSorter revisionSorter = new RevisionSorter();
         revisionsGroupedByUser = revisionSorter.groupRevisionsByUser(revisionsList);
 
@@ -146,7 +146,8 @@ public class TestWikipediaRevisions {
 
         List<Revision> revisionsList = revisionParser.createRevisionsListFromJson();
 
-        Map<String, List<Revision>> revisionsGroupedByUser = new HashMap<>();
+        Map<String, List<Revision>> revisionsGroupedByUser;
+
         RevisionSorter revisionSorter = new RevisionSorter();
         revisionsGroupedByUser = revisionSorter.groupRevisionsByUser(revisionsList);
 
