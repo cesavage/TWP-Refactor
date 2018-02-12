@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -167,7 +168,31 @@ public class TestWikipediaRevisions {
         sortUserToRevisionMapRevisionsByTimestamp.invoke(revisionSorter, revisionsGroupedByUser);
 
         Assert.assertEquals("2018-02-09 06:08:37.0", revisionsGroupedByUser.get("192.5.211.252").get(0).timestamp.toString());
+    }
 
+    @Test
+    public void testIndexMostActiveUsers() throws ParseException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        InputStream sampleJsonStream = this.getClass().getClassLoader().getResourceAsStream("sample.json");
+        InputStreamReader sampleJsonStreamReader = new InputStreamReader(sampleJsonStream);
+        RevisionParser revisionParser = new RevisionParser(sampleJsonStreamReader);
+
+        List<Revision> revisionsList = revisionParser.createRevisionsListFromJson();
+
+        RevisionSorter revisionSorter = new RevisionSorter();
+
+        //Set utility method as accessible
+        //TODO add indexing utility method here
+        Method createUserToRevisionMap = RevisionSorter.class.getDeclaredMethod("createUserToRevisionMap", List.class);
+        createUserToRevisionMap.setAccessible(true);
+        Method indexMostActiveUsers = RevisionSorter.class.getDeclaredMethod("indexMostActiveUsers", Map.class);
+        indexMostActiveUsers.setAccessible(true);
+
+
+        Map<String, List<Revision>> revisionsGroupedByUser = (Map<String, List<Revision>>) createUserToRevisionMap.invoke(revisionSorter, revisionsList);
+
+
+        List<String> usersWithMostRevisions = (List<String>) indexMostActiveUsers.invoke(revisionSorter, revisionsGroupedByUser);
+        Assert.assertEquals("192.5.211.252", usersWithMostRevisions.get(0));
     }
 
 }

@@ -27,10 +27,27 @@ public class RevisionSorter {
             revisionsFromUser.sort(new Comparator<Revision>() {
                 public int compare(Revision revision1, Revision revision2) {
                     return revision2.timestamp.compareTo(revision1.timestamp);
-                }
-            });
+                    }
+                });
+            }
+        }
+
+    private List<String> indexMostActiveUsers(Map<String, List<Revision>> userToRevisionMap){
+        List<String> mostActiveUsers = new ArrayList<>();
+        int mostRevisionsFound = 0;
+
+        for (Map.Entry<String, List<Revision>> entry: userToRevisionMap.entrySet()){
+            int numberOfRevisionsForUser = entry.getValue().size();
+
+            if (numberOfRevisionsForUser > mostRevisionsFound){
+                mostRevisionsFound = numberOfRevisionsForUser;
+                mostActiveUsers.clear();
+                mostActiveUsers.add(entry.getKey());
+            }
+        }
+        //TODO add logic for a tie
+        return mostActiveUsers;
     }
-}
 
 //TODO rebuild array list
 //Rebuild array list
